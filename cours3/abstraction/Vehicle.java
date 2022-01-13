@@ -48,5 +48,4 @@ public class Vehicle extends Machine {
         }
         return ret;
     }
-
 }

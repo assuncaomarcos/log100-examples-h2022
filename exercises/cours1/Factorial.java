@@ -1,3 +1,5 @@
+package cours1;
+
 public class Factorial {
     public static void main(String[] args) {
         int i = 1;          // compteur pour la boucle
