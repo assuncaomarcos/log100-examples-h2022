@@ -13,8 +13,10 @@
       <sourceFolder url="file://$MODULE_DIR$/cours4" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/complexite" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/cours5" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cours6" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="json-20211205" level="project" />
   </component>
 </module>
