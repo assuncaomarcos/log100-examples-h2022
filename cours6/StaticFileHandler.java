@@ -111,27 +111,22 @@ public class StaticFileHandler implements HttpHandler {
             return;
         }
 
-        FileInputStream fis;
-        try {
-            fis = new FileInputStream(canonicalFile);
+        try (FileInputStream fis = new FileInputStream(canonicalFile); ) {
+            String mimeType = lookupMime(urlPath);
+            he.getResponseHeaders().set("Content-Type", mimeType);
+            if ("GET".equals(method)) {
+                he.sendResponseHeaders(200, canonicalFile.length());
+                OutputStream os = he.getResponseBody();
+                copyStream(fis, os);
+                os.close();
+            } else {
+                assert("HEAD".equals(method));
+                he.sendResponseHeaders(200, -1);
+            }
         } catch (FileNotFoundException e) {
             // The file may also be forbidden to us instead of missing, but we're leaking less information this way
             sendError(he, 404, "File not found");
-            return;
         }
-
-        String mimeType = lookupMime(urlPath);
-        he.getResponseHeaders().set("Content-Type", mimeType);
-        if ("GET".equals(method)) {
-            he.sendResponseHeaders(200, canonicalFile.length());
-            OutputStream os = he.getResponseBody();
-            copyStream(fis, os);
-            os.close();
-        } else {
-            assert("HEAD".equals(method));
-            he.sendResponseHeaders(200, -1);
-        }
-        fis.close();
     }
 
     private void copyStream(InputStream is, OutputStream os) throws IOException {
@@ -148,9 +143,10 @@ public class StaticFileHandler implements HttpHandler {
 
         he.getResponseHeaders().set("Content-Type", "text/plain; charset=utf-8");
         he.sendResponseHeaders(rCode, messageBytes.length);
-        OutputStream os = he.getResponseBody();
-        os.write(messageBytes);
-        os.close();
+
+        try ( OutputStream os = he.getResponseBody(); ) {
+            os.write(messageBytes);
+        }
     }
 
     // This is one function to avoid giving away where we failed
